@@ -1,3 +1,10 @@
+from os import mkdir
+
+try:
+    mkdir("data")
+except FileExistsError:
+    pass
+
 DATAFILE_PATH = "data\\phone_book.data"
 
 
