@@ -1,17 +1,19 @@
 import view, model
+
+
 def start():
     view.show_help()
     while True:
-        command = input('Введите команду:')
+        command = input('Введите команду: ')
         if command == '1':
             data = model.get_all_data()
             view.show_contacts(data)
         elif command == '2'    
-            name = input('Введите имя контакта:').replace(" ", "")
-            surname = input('Введите фамилию контакта:').replace(" ", "")
-            otche = input('Введите отчество конткта:').replace(" ", "")
-            number_phone = input('Введите номер телефона:').replace(" ", "")
-            contact = model.Contact(name=name, surname=surname, otche=otche, phone_number=number_phone)
+            name = input('Введите имя контакта: ').replace(" ", "")
+            surname = input('Введите фамилию контакта: ').replace(" ", "")
+            otche = input('Введите отчество конткта: ').replace(" ", "")
+            phone_number = input('Введите номер телефона: ').replace(" ", "")
+            contact = model.Contact(name=name, surname=surname, otche=otche, phone_number=phone_number)
             status = model.add_contact(contact)
             view.show_status(status)
         elif command == '3':
@@ -33,10 +35,3 @@ def start():
             view.show_menu()   
         elif command == '7': 
             break
-        
-            
-
-
-
-
-    
