@@ -17,21 +17,25 @@ def start():
             status = model.add_contact(contact)
             view.show_status(status)
         elif command == '3':
-            find = input('Введите что искать:')
+            find = input('Введите что искать: ')
             result = model.search(find)
             view.show_contacts(result)
         elif command == '4':
-            id = input('Введите id контакта')
+            id = input('Введите id контакта: ')
             view.show_contacts(model.get_contact_by_id(id))
             view.change_help()
-            what = input('Введите цифру')
-            status = model.change_contact(id, what)
+            what = input('Введите цифру: ')
+            change = input('Введите новое значение: ')
+            status = model.change_contact(id, what, change)
             view.show_status(status)
         elif command == '5':
-            id = input('Введите id контакта')
+            id = input('Введите id контакта: ')
             status = model.del_contact(id)
             view.show_status(status)
         elif command == '6':
             view.show_menu()
         elif command == '7':
             break
+        else:
+            view.mistake()
+            view.show_menu()
