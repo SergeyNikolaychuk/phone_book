@@ -33,6 +33,7 @@ def get_all_data() -> list:
             for line in datafile:
                 contacts_list.append(line[:-1])
         if contacts_list:
+            contacts_list.insert(0, "Все контакты:")
             return contacts_list
         return ["Телефонная книга пуста"]
     except FileNotFoundError:
@@ -67,7 +68,47 @@ def search(find: str) -> list:
 
 # 4 command возвращает статус
 def change_contact(id: str, what: str, change: str) -> str:
-    return f"<{id=}> <{what=}> Контакт изменён"
+    target_index = None
+    target_contact = None
+    contacts_list = []
+    try:
+        with open(DATAFILE_PATH, encoding="utf-8") as datafile:
+            i = 0
+            for line in datafile:
+                contact_fields = line.split()
+                if id != contact_fields[0][1:-1]:
+                    contacts_list.append(line)
+                else:
+                    target_index = i
+                    target_contact = line[:-1]
+                i += 1
+    except FileNotFoundError:
+        return "Телефонная книга пуста"
+
+    if (not target_contact) and (not contacts_list):
+        return "Телефонная книга пуста"
+
+    if target_contact:
+        id, name, surname, otche, phone_number = target_contact.split()
+        contact_obj = Contact(name=name, surname=surname, otche=otche, phone_number=phone_number, id=id[1:-1])
+
+        if what == "1":
+            contact_obj.name = change
+        elif what == "2":
+            contact_obj.surname = change
+        elif what == "3":
+            contact_obj.otche = change
+        elif what == "4":
+            contact_obj.phone_number = change
+
+        contacts_list.insert(target_index, f"{str(contact_obj)}\n")
+
+        with open(DATAFILE_PATH, "w", encoding="utf-8") as datafile:
+            for contact in contacts_list:
+                datafile.write(contact)
+        return f"Контакт изменён, теперь он такой:\n{contact_obj}"
+    else:
+        return "Контакта с таким id нет"
 
 
 # 5 command возвращает статус
