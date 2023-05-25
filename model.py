@@ -6,6 +6,8 @@ except FileExistsError:
     pass
 
 DATAFILE_PATH = "data\\phone_book.data"
+FREE_IDS = "data\\free_ids"
+LAST_ID = "data\\last_id"
 
 
 class Contact:
@@ -42,8 +44,10 @@ def get_all_data() -> list:
 
 # 2 command возвращает статус
 def add_contact(contact: Contact) -> str:
-    # надо организовать упарвление айдишниками
-    contact.id = "1"
+    contact.id = get_last_free_id()
+    if not contact.id:
+        contact.id = get_last_id()
+        set_last_id(int(contact.id) + 1)
     with open(DATAFILE_PATH, 'a', encoding="utf-8") as datafile:
         datafile.write(f"{str(contact)}\n")
     return "Контакт добавлен"
@@ -133,6 +137,7 @@ def del_contact(id: str) -> str:
         with open(DATAFILE_PATH, "w", encoding="utf-8") as datafile:
             for contact in contacts_list:
                 datafile.write(contact)
+        add_free_id(id)
         return f"{target_contact} удалён"
     else:
         return "Контакта с таким id нет"
@@ -153,3 +158,49 @@ def get_contact_by_id(id: str) -> list:
             return ["Контакта с таким id нет"]
     except FileNotFoundError:
         return ["Телефонная книга пуста"]
+
+
+def get_last_id() -> int:
+    try:
+        with open(LAST_ID) as last_id_file:
+            last_id = last_id_file.read()
+        if last_id:
+            return int(last_id)
+        else:
+            return 1
+    except FileNotFoundError:
+        with open(LAST_ID, 'w') as last_id_file:
+            last_id_file.write("1")
+        return 1
+
+
+def set_last_id(id: int) -> None:
+    with open(LAST_ID, 'w') as last_id_file:
+        last_id_file.write(str(id))
+
+
+def get_free_ids() -> list:
+    try:
+        with open(FREE_IDS) as free_ids_file:
+            free_ids_list = free_ids_file.read().split()
+        return free_ids_list
+    except FileNotFoundError:
+        with open(FREE_IDS, 'w') as free_ids_file:
+            pass
+        return []
+
+
+def get_last_free_id() -> int:
+    free_ids = get_free_ids()
+    if free_ids:
+        last_free_id = free_ids.pop()
+    else:
+        last_free_id = 0
+    with open(FREE_IDS, 'w') as free_ids_file:
+        free_ids_file.write(" ".join(free_ids))
+    return last_free_id
+
+
+def add_free_id(id: str) -> None:
+    with open(FREE_IDS, 'a') as free_ids_file:
+        free_ids_file.write(f"{id} ")
