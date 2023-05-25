@@ -51,9 +51,9 @@ def add_contact(contact: Contact) -> str:
 # 3 command возвращает список контактов
 def search(find: str) -> list:
     find = find.lower()
+    contacts_list = []
     try:
         with open(DATAFILE_PATH, encoding="utf-8") as datafile:
-            contacts_list = []
             for line in datafile:
                 if find in line.lower():
                     contacts_list.append(line[:-1])
@@ -66,14 +66,49 @@ def search(find: str) -> list:
 
 
 # 4 command возвращает статус
-def change_contact(id: str, what: str) -> str:
+def change_contact(id: str, what: str, change: str) -> str:
     return f"<{id=}> <{what=}> Контакт изменён"
 
 
 # 5 command возвращает статус
 def del_contact(id: str) -> str:
-    return f"<{id=}> контакт удалён"
+    target_contact = None
+    contacts_list = []
+    try:
+        with open(DATAFILE_PATH, encoding="utf-8") as datafile:
+            for line in datafile:
+                contact_fields = line.split()
+                if id != contact_fields[0][1:-1]:
+                    contacts_list.append(line)
+                else:
+                    target_contact = line[:-1]
+    except FileNotFoundError:
+        return "Телефонная книга пуста"
+
+    if (not target_contact) and (not contacts_list):
+        return "Телефонная книга пуста"
+
+    if target_contact:
+        with open(DATAFILE_PATH, "w", encoding="utf-8") as datafile:
+            for contact in contacts_list:
+                datafile.write(contact)
+        return f"{target_contact} удалён"
+    else:
+        return "Контакта с таким id нет"
 
 
 def get_contact_by_id(id: str) -> list:
-    return [f"какой-то контакт c {id=}"]
+    target_contact = None
+    try:
+        with open(DATAFILE_PATH, encoding="utf-8") as datafile:
+            for line in datafile:
+                contact_fields = line.split()
+                if id == contact_fields[0][1:-1]:
+                    target_contact = line[:-1]
+                    break
+        if target_contact:
+            return [target_contact]
+        else:
+            return ["Контакта с таким id нет"]
+    except FileNotFoundError:
+        return ["Телефонная книга пуста"]
