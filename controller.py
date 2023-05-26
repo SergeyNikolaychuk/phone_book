@@ -29,9 +29,11 @@ def start():
             status = model.change_contact(id, what, change)
             view.show_status(status)
         elif command == '5':
-            id = input('Введите id контакта: ')
-            status = model.del_contact(id)
-            view.show_status(status)
+            sure = input('Вы уверены,что хотите удалить контакт? (Y/N) ')
+            if sure == 'Y':
+                id = input('Введите id контакта: ')
+                status = model.del_contact(id)
+                view.show_status(status)
         elif command == '6':
             view.show_menu()
         elif command == '7':
